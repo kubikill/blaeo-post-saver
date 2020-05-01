@@ -8,6 +8,6 @@
 // @downloadURL  https://github.com/kubikill/blaeo-post-saver/raw/master/blaeo-post-saver.user.js
 // @description  Adds a save/load feature to BLAEO posts.
 // @author       kubikill
-// @match        https://www.backlog-assassins.net/posts/new
+// @match        https://www.backlog-assassins.net/*
 // @grant        none
 // ==/UserScript==
