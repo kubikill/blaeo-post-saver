@@ -141,7 +141,7 @@
         // Check if user leaves post page. If yes, trigger exitsave
         document.addEventListener("turbolinks:before-visit", function triggerExitsave() {
             if (document.querySelector("form#new_post") !== null) {
-                autosavePost();
+                exitsavePost();
                 document.removeEventListener("turbolinks:before-visit", triggerExitsave)
             }
         });
@@ -149,7 +149,7 @@
         // Check if we are on the new post page. This check triggers on every page load
         document.addEventListener("turbolinks:load", function reloadScript() {
             if (document.querySelector("form#new_post") == null) {
-                document.removeEventListener("beforeunload", autosavePost)
+                document.removeEventListener("beforeunload", exitsavePost)
             } else {
                 document.removeEventListener("turbolinks:load", reloadScript)
                 runScript();
