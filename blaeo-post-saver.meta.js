@@ -9,5 +9,5 @@
 // @description  Adds a save/load feature to BLAEO posts.
 // @author       kubikill
 // @match        https://www.backlog-assassins.net/*
-// @grant        none
+// @grant        unsafeWindow
 // ==/UserScript==

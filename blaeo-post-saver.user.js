@@ -9,12 +9,12 @@
 // @description  Adds a save/load feature to BLAEO posts.
 // @author       kubikill
 // @match        https://www.backlog-assassins.net/*
-// @grant        none
+// @grant        unsafeWindow
 // ==/UserScript==
 
 (function () {
     'use strict';
-
+    if(typeof $ == 'undefined'){ var $ = unsafeWindow.jQuery; }
     function runScript() {
         var htmlSaveBtn = '<div class="dropdown" style="display: inline-block; margin-right: 5px"><a id="BLAEOPS_savebtn" class="btn btn-default" data-target="#" data-toggle="dropdown" role="button" aria-expanded="false">Save <span class="caret"></span></a><ul class="dropdown-menu"><li><a href="#" data-blaeops_slot="1" data-toggle="modal" data-target="#BLAEOPS_savemodal">Save 1 - <span class="BLAEOPS_slotsavename">empty</span></a></li><li><a href="#" data-blaeops_slot="2" data-toggle="modal" data-target="#BLAEOPS_savemodal">Save 2 - <span class="BLAEOPS_slotsavename">empty</span></a></li><li><a href="#" data-blaeops_slot="3" data-toggle="modal" data-target="#BLAEOPS_savemodal">Save 3 - <span class="BLAEOPS_slotsavename">empty</span></a></li></ul></div>';
         var htmlLoadBtn = '<div class="dropdown" style="display: inline-block; margin: 0 5px"><a id="BLAEOPS_loadbtn" class="btn btn-default" data-target="#" data-toggle="dropdown" role="button" aria-expanded="false">Load <span class="caret"></span></a><ul class="dropdown-menu"><li><a href="#" data-blaeops_slot="1" data-toggle="modal" data-target="#BLAEOPS_loadmodal">Save 1 - <span class="BLAEOPS_slotsavename">empty</span></a></li><li><a href="#" data-blaeops_slot="2" data-toggle="modal" data-target="#BLAEOPS_loadmodal">Save 2 - <span class="BLAEOPS_slotsavename">empty</span></a></li><li><a href="#" data-blaeops_slot="3" data-toggle="modal" data-target="#BLAEOPS_loadmodal">Save 3 - <span class="BLAEOPS_slotsavename">empty</span></a></li><li><a href="#" data-blaeops_slot="4" data-toggle="modal" data-target="#BLAEOPS_loadmodal">Autosave - <span class="BLAEOPS_slotsavename">empty</span></a></li><li><a href="#" data-blaeops_slot="5" data-toggle="modal" data-target="#BLAEOPS_loadmodal">Exitsave - <span class="BLAEOPS_slotsavename">empty</span></a></li></ul></div>';
@@ -88,11 +88,11 @@
                 saveMsg.innerHTML = "Post saved!";
             };
             localStorage.setItem("BLAEOPS_slotname" + slot, name);
-            $(saveMsg).fadeIn();
-            setTimeout(function () {
-                $(saveMsg).fadeOut();
-            }, 3000);
             updateNames();
+            $("#BLAEOPS_msg").fadeIn();
+            setTimeout(function () {
+                $("#BLAEOPS_msg").fadeOut();
+            }, 3000);
         }
 
         function updateNames() {
@@ -127,7 +127,7 @@
             e.currentTarget.removeEventListener("input", handler)
         });
 
-        function autosavePost() {
+        function exitsavePost() {
             if (document.querySelector("form#new_post") !== null) {
                 var time = new Date();
                 if (postTextarea.value) {
@@ -136,13 +136,13 @@
             }
         }
 
-        document.addEventListener("beforeunload", autosavePost); // Trigger exitsave when closing page, do not save if post is empty
+        document.addEventListener("beforeunload", exitsavePost); // Trigger exitsave when closing page
 
-        // Check if user leaves post page.
-        document.addEventListener("turbolinks:before-visit", function triggerAutosave() {
+        // Check if user leaves post page. If yes, trigger exitsave
+        document.addEventListener("turbolinks:before-visit", function triggerExitsave() {
             if (document.querySelector("form#new_post") !== null) {
                 autosavePost();
-                document.removeEventListener("turbolinks:before-visit", triggerAutosave)
+                document.removeEventListener("turbolinks:before-visit", triggerExitsave)
             }
         });
 
@@ -158,7 +158,7 @@
         updateNames();
     }
 
-    // Once user visits BLAEO, check if the new post page is currently loaded. If not, check that every time page changes
+    // Once user visits BLAEO, check if the new post page is currently loaded. If not, check that every time the page changes
     if (document.querySelector("form#new_post") !== null) {
         runScript();
     } else {
